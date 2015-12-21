@@ -1,7 +1,16 @@
 name:           gitter
 version:        0.0.0.0
+synopsis:       Gitter.im API client
+description:    Gitter.im is a programmers-oriented GitHub-based web-chat.
+                This package provides a (partial) implementation of its API.
+
+maintainer:     Yuriy Syrovetskiy <cblp@cblp.su>
+license:        GPL-3
+license-file:   LICENSE
+
 build-type:     Simple
 cabal-version:  >= 1.10
+category:       API, Network
 
 library
     build-depends:      aeson
@@ -25,3 +34,7 @@ library
     hs-source-dirs:     src
     other-modules:      Control.Monad.Trans.X
                         Data.String.X
+
+source-repository head
+    type:     git
+    location: https://github.com/cblp/haskell-gitter.git
