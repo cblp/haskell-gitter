@@ -1,5 +1,5 @@
 name:           gitter
-version:        0.0.0.0
+version:        0.0.0.1
 synopsis:       Gitter.im API client
 description:    Gitter.im is a programmers-oriented GitHub-based web-chat.
                 This package provides a (partial) implementation of its API.
