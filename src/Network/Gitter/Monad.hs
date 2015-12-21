@@ -1,6 +1,5 @@
 {-
-    Notifaika reposts notifications
-    from different feeds to Gitter chats.
+    Gitter API client — Haskell library
     Copyright (C) 2015 Yuriy Syrovetskiy
 
     This program is free software: you can redistribute it and/or modify
