@@ -1,5 +1,5 @@
 name:           gitter
-version:        0.0.0.1
+version:        0.1
 synopsis:       Gitter.im API client
 description:    Gitter.im is a programmers-oriented GitHub-based web-chat.
                 This package provides a (partial) implementation of its API.
@@ -22,11 +22,6 @@ library
                       , mtl
                       , text
                       , wreq
-    default-extensions: GeneralizedNewtypeDeriving
-                        OverloadedStrings
-                        RecordWildCards
-                        StandaloneDeriving
-                        TemplateHaskell
     default-language:   Haskell2010
     exposed-modules:    Network.Gitter
                         Network.Gitter.Monad

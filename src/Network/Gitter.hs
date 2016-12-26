@@ -1,6 +1,6 @@
 {-
     Gitter API client — Haskell library
-    Copyright (C) 2015 Yuriy Syrovetskiy
+    Copyright (C) 2015-2016 Yuriy Syrovetskiy
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,6 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -}
 
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE OverloadedStrings #-}
+
 module Network.Gitter
     ( Gitter(..)
     , GitterT
@@ -24,20 +28,25 @@ module Network.Gitter
     , withRoom
     ) where
 
-import Network.Gitter.Monad
-import Network.Gitter.Types
+import           Control.Lens ((&~), (?=), (^.), (^?))
+import           Control.Monad (void)
+import           Control.Monad.Catch (MonadThrow)
+import           Control.Monad.IO.Class (MonadIO, liftIO)
+import           Control.Monad.Reader (ReaderT, ask, runReaderT)
+import           Control.Monad.Trans (MonadTrans, lift)
+import           Data.Aeson (Value(String), object)
+import           Data.Aeson.Lens (_String, key)
+import qualified Data.ByteString.Char8 as ByteString
+import qualified Data.List as List
+import           Data.Monoid ((<>))
+import           Data.Text (Text)
+import qualified Data.Text as Text
+import           Network.Wreq (asJSON, auth, defaults, oauth2Bearer, postWith,
+                               responseBody)
 
-import            Control.Lens
-import            Control.Monad.Catch
-import            Control.Monad.Reader
-import            Data.Aeson
-import            Data.Aeson.Lens
-import            Data.ByteString.Char8 as ByteString
-import            Data.List as List
-import            Data.Monoid
-import            Data.Text ( Text )
-import qualified  Data.Text as Text
-import            Network.Wreq
+import           Network.Gitter.Monad (MonadGitter (runGitterAction))
+import           Network.Gitter.Types (Gitter(..), ResourcePath, Room(ONETOONE,
+                                       REPO), RoomId, RoomUri)
 
 newtype GitterT m a = GitterT (ReaderT Gitter m a)
     deriving (Applicative, Functor, Monad, MonadIO, MonadThrow, MonadTrans)
@@ -49,10 +58,10 @@ newtype GitterRoomT m a = GitterRoomT (ReaderT Room m a)
     deriving Functor
 
 roomUri :: Room -> RoomUri
-roomUri (ONETOONE user) = user
+roomUri (ONETOONE user)  = user
 roomUri (REPO user repo) = user <> "/" <> repo
 
-withRoom :: MonadGitter gitter => Room -> GitterRoomT gitter a -> gitter a
+withRoom :: Room -> GitterRoomT gitter a -> gitter a
 withRoom room (GitterRoomT readerAction) =
     runReaderT readerAction room
 
@@ -75,7 +84,7 @@ joinRoom room = do
 
 instance (MonadIO io, MonadThrow io) => MonadGitter (GitterT io) where
     runGitterAction path apiRequest = GitterT $ do
-        Gitter{..} <- ask
+        Gitter{gitter_baseUrl, gitter_tokenFile} <- ask
         tokenFileContents <- liftIO $ ByteString.readFile gitter_tokenFile
         let token = normalizeSpace tokenFileContents
             url = List.intercalate "/" (gitter_baseUrl : fmap Text.unpack path)

@@ -1,6 +1,6 @@
 {-
     Gitter API client — Haskell library
-    Copyright (C) 2015 Yuriy Syrovetskiy
+    Copyright (C) 2015-2016 Yuriy Syrovetskiy
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,11 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -}
 
+{-# LANGUAGE TemplateHaskell #-}
+
 module Network.Gitter.Types where
 
-import Data.Aeson.TH
-import Data.String.X
-import Data.Text
+import Data.Aeson.TH (SumEncoding(TaggedObject), contentsFieldName,
+                      defaultOptions, deriveJSON, fieldLabelModifier,
+                      sumEncoding, tagFieldName)
+import Data.String.X (dropPrefix)
+import Data.Text (Text)
 
 type ResourcePath = [Text]
 type UserName = Text
@@ -28,19 +32,22 @@ type RepoName = Text
 type RoomId = Text
 type RoomUri = Text
 
-data Room = ONETOONE UserName | REPO UserName RepoName
+data Room
+    = ONETOONE UserName
+    | REPO UserName RepoName
     deriving Show
 
 deriveJSON
-    defaultOptions  { sumEncoding = TaggedObject  { tagFieldName = "type"
-                                                  , contentsFieldName = "uri"
-                                                  }
-                    }
+    defaultOptions
+        { sumEncoding =
+              TaggedObject{tagFieldName = "type", contentsFieldName = "uri"}
+        }
     ''Room
 
-data Gitter = Gitter  { gitter_baseUrl :: String
-                      , gitter_room :: Room
-                      , gitter_tokenFile :: FilePath
-                      }
+data Gitter = Gitter
+    { gitter_baseUrl   :: String
+    , gitter_room      :: Room
+    , gitter_tokenFile :: FilePath
+    }
 
-deriveJSON defaultOptions { fieldLabelModifier = dropPrefix "gitter_" } ''Gitter
+deriveJSON defaultOptions{fieldLabelModifier = dropPrefix "gitter_"} ''Gitter
