@@ -1,5 +1,5 @@
 name:           gitter
-version:        0.2.0
+version:        0.3.0
                 -- ^ SemVer
 synopsis:       Gitter.im API client
 description:    Gitter.im is a programmers-oriented GitHub-based web-chat.
