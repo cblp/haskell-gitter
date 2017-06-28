@@ -1,9 +1,9 @@
-module Network.Gitter.Monad where
+module Gitter.Monad (MonadGitter (..)) where
 
-import           Network.Gitter.Types
+import Control.Monad.Reader (ReaderT, lift)
+import Data.Aeson (Value)
 
-import           Control.Monad.Reader
-import           Data.Aeson
+import Gitter.Types (ResourcePath)
 
 class Monad m => MonadGitter m where
     runGitterAction :: ResourcePath -> Value -> m Value

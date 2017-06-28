@@ -1,34 +1,34 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE NamedFieldPuns             #-}
-{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE OverloadedStrings #-}
 
-module Network.Gitter
-    ( Gitter(..)
+module Gitter
+    ( Gitter (..)
     , GitterT
     , runGitterT
     , sendChatMessage
     , withRoom
     ) where
 
-import           Control.Lens           ((&~), (?=), (^.), (^?))
-import           Control.Monad          (void)
-import           Control.Monad.Catch    (MonadThrow)
+import           Control.Lens ((&~), (?=), (^.), (^?))
+import           Control.Monad (void)
+import           Control.Monad.Catch (MonadThrow)
 import           Control.Monad.IO.Class (MonadIO, liftIO)
-import           Control.Monad.Reader   (ReaderT, ask, runReaderT)
-import           Control.Monad.Trans    (MonadTrans, lift)
-import           Data.Aeson             (Value (String), object)
-import           Data.Aeson.Lens        (key, _String)
-import qualified Data.ByteString.Char8  as ByteString
-import qualified Data.List              as List
-import           Data.Monoid            ((<>))
-import           Data.Text              (Text)
-import qualified Data.Text              as Text
-import           Network.Wreq           (asJSON, auth, defaults, oauth2Bearer,
-                                         postWith, responseBody)
+import           Control.Monad.Reader (ReaderT, ask, runReaderT)
+import           Control.Monad.Trans (MonadTrans, lift)
+import           Data.Aeson (Value (String), object)
+import           Data.Aeson.Lens (key, _String)
+import qualified Data.ByteString.Char8 as ByteString
+import qualified Data.List as List
+import           Data.Monoid ((<>))
+import           Data.Text (Text)
+import qualified Data.Text as Text
+import           Network.Wreq (asJSON, auth, defaults, oauth2Bearer, postWith,
+                               responseBody)
 
-import           Network.Gitter.Monad   (MonadGitter (runGitterAction))
-import           Network.Gitter.Types   (Gitter (..), ResourcePath,
-                                         Room (ONETOONE, REPO), RoomId, RoomUri)
+import Gitter.Monad (MonadGitter (runGitterAction))
+import Gitter.Types (Gitter (..), ResourcePath, Room (ONETOONE, REPO), RoomId,
+                     RoomUri)
 
 newtype GitterT m a = GitterT (ReaderT Gitter m a)
     deriving (Applicative, Functor, Monad, MonadIO, MonadThrow, MonadTrans)
@@ -66,10 +66,10 @@ joinRoom room = do
 
 instance (MonadIO io, MonadThrow io) => MonadGitter (GitterT io) where
     runGitterAction path apiRequest = GitterT $ do
-        Gitter{gitter_baseUrl, gitter_tokenFile} <- ask
-        tokenFileContents <- liftIO $ ByteString.readFile gitter_tokenFile
+        Gitter{gitterBaseUrl, gitterTokenFile} <- ask
+        tokenFileContents <- liftIO $ ByteString.readFile gitterTokenFile
         let token = normalizeSpace tokenFileContents
-            url = List.intercalate "/" (gitter_baseUrl : fmap Text.unpack path)
+            url = List.intercalate "/" (gitterBaseUrl : fmap Text.unpack path)
             opts = defaults &~ auth ?= oauth2Bearer token
         response <- liftIO (postWith opts url apiRequest)
         jsonResponse <- asJSON response
