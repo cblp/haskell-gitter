@@ -1,11 +1,12 @@
 name:           gitter
-version:        0.2 -- ComVer
+version:        0.2
+                -- ^ ComVer
 synopsis:       Gitter.im API client
 description:    Gitter.im is a programmers-oriented GitHub-based web-chat.
                 This package provides a (partial) implementation of its API.
 
 maintainer:     Yuriy Syrovetskiy <cblp@cblp.su>
-license:        BSD-3
+license:        BSD3
 license-file:   LICENSE
 
 build-type:     Simple
