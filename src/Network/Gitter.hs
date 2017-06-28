@@ -1,24 +1,6 @@
-{-
-    Gitter API client — Haskell library
-    Copyright (C) 2015-2016 Yuriy Syrovetskiy
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
--}
-
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE NamedFieldPuns #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE NamedFieldPuns             #-}
+{-# LANGUAGE OverloadedStrings          #-}
 
 module Network.Gitter
     ( Gitter(..)
@@ -28,25 +10,25 @@ module Network.Gitter
     , withRoom
     ) where
 
-import           Control.Lens ((&~), (?=), (^.), (^?))
-import           Control.Monad (void)
-import           Control.Monad.Catch (MonadThrow)
+import           Control.Lens           ((&~), (?=), (^.), (^?))
+import           Control.Monad          (void)
+import           Control.Monad.Catch    (MonadThrow)
 import           Control.Monad.IO.Class (MonadIO, liftIO)
-import           Control.Monad.Reader (ReaderT, ask, runReaderT)
-import           Control.Monad.Trans (MonadTrans, lift)
-import           Data.Aeson (Value(String), object)
-import           Data.Aeson.Lens (_String, key)
-import qualified Data.ByteString.Char8 as ByteString
-import qualified Data.List as List
-import           Data.Monoid ((<>))
-import           Data.Text (Text)
-import qualified Data.Text as Text
-import           Network.Wreq (asJSON, auth, defaults, oauth2Bearer, postWith,
-                               responseBody)
+import           Control.Monad.Reader   (ReaderT, ask, runReaderT)
+import           Control.Monad.Trans    (MonadTrans, lift)
+import           Data.Aeson             (Value (String), object)
+import           Data.Aeson.Lens        (key, _String)
+import qualified Data.ByteString.Char8  as ByteString
+import qualified Data.List              as List
+import           Data.Monoid            ((<>))
+import           Data.Text              (Text)
+import qualified Data.Text              as Text
+import           Network.Wreq           (asJSON, auth, defaults, oauth2Bearer,
+                                         postWith, responseBody)
 
-import           Network.Gitter.Monad (MonadGitter (runGitterAction))
-import           Network.Gitter.Types (Gitter(..), ResourcePath, Room(ONETOONE,
-                                       REPO), RoomId, RoomUri)
+import           Network.Gitter.Monad   (MonadGitter (runGitterAction))
+import           Network.Gitter.Types   (Gitter (..), ResourcePath,
+                                         Room (ONETOONE, REPO), RoomId, RoomUri)
 
 newtype GitterT m a = GitterT (ReaderT Gitter m a)
     deriving (Applicative, Functor, Monad, MonadIO, MonadThrow, MonadTrans)
