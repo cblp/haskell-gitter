@@ -1,6 +1,6 @@
 name:           gitter
-version:        0.3.0
-                -- ^ SemVer
+version:        0.4
+                -- ^ ComVer
 synopsis:       Gitter.im API client
 description:    Gitter.im is a programmers-oriented GitHub-based web-chat.
                 This package provides a (partial) implementation of its API.
